@@ -1,0 +1,8 @@
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/bin/Debug/netcoreapp1.1/ContosoUniversity.deps.json
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/bin/Debug/netcoreapp1.1/ContosoUniversity.runtimeconfig.json
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/bin/Debug/netcoreapp1.1/ContosoUniversity.runtimeconfig.dev.json
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/bin/Debug/netcoreapp1.1/ContosoUniversity.dll
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/bin/Debug/netcoreapp1.1/ContosoUniversity.pdb
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/obj/Debug/netcoreapp1.1/ContosoUniversity.AssemblyInfo.cs
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/obj/Debug/netcoreapp1.1/ContosoUniversity.dll
+/Users/travis/Projects/Docs/aspnetcore/data/ef-mvc/intro/samples/cu-final/obj/Debug/netcoreapp1.1/ContosoUniversity.pdb
