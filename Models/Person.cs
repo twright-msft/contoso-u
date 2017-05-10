@@ -25,6 +25,8 @@ namespace ContosoUniversity.Models
                 return LastName + ", " + FirstMidName;
             }
         }
-        public string SSN { get; set; }
+        
+        //DEMO
+        //public string SSN { get; set; }
     }
 }

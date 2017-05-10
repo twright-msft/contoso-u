@@ -154,7 +154,9 @@ namespace ContosoUniversity.Controllers
             if (await TryUpdateModelAsync<Student>(
                 studentToUpdate,
                 "",
+                //DEMO
                 s => s.FirstMidName, s => s.LastName, s => s.EnrollmentDate))
+                //s => s.FirstMidName, s => s.LastName, s => s.EnrollmentDate, s => s.SSN))
             {
                 try
                 {
