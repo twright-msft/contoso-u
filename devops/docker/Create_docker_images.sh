@@ -12,16 +12,13 @@ sleep 10
 printf "\nRestoring production database into sanitation environment\n"
 sqlcmd -Usa -P//build2017 -i ../sql/Restore_Production_Database_as_Development.sql
 
+printf "\nDocker commit to create pre-production image\n"
+docker commit sanitation-station db-pre-prod:latest
+docker images
+
 printf "\nSanitizing production data for development use\n"
 sqlcmd -Usa -P//build2017 -i ../sql/Sanitize_Production_Database_for_Dev_use.sql
-sqlcmd -Usa -P//build2017 -Q"SELECT TOP 10 FirstName, LastName FROM ContosoUniversity_DevBig.dbo.Person;"
-
-printf "\nDetaching, making copy of sanitized database to create small dev DB, and re-attaching again\n"
-sqlcmd -Usa -P//build2017 -i ../sql/Detach_DevBig_Database.sql
-docker exec -it sanitation-station "cp" "/var/opt/mssql/data/ContosoUniversityBig.mdf" "/var/opt/mssql/data/ContosoUniversitySmall.mdf"
-docker exec -it sanitation-station "cp" "/var/opt/mssql/data/ContosoUniversityBig.ldf" "/var/opt/mssql/data/ContosoUniversitySmall.ldf"
-sqlcmd -Usa -P//build2017 -i ../sql/Attach_Dev_Databases.sql
-sqlcmd -Usa -P//build2017 -Q"SELECT name FROM sys.databases;"
+sqlcmd -Usa -P//build2017 -Q"SELECT TOP 10 FirstName, LastName FROM ContosoUniversity.dbo.Person;"
 
 printf "\nShrinking small dev database\n"
 sqlcmd -Usa -P//build2017 -i ../sql/Shrink_Development_Database_Small.sql

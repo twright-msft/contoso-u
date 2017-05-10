@@ -1,4 +1,4 @@
-USE ContosoUniversity_DevBig;
+USE ContosoUniversit;
 
 -- Sanitize production data for development use.
 -- Use Norwegian encryption.

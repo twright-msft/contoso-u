@@ -1,4 +1,4 @@
-USE ContosoUniversity_DevSmall;
+USE ContosoUniversity;
 
 DELETE dbo.Person WHERE ID > 20;
 
