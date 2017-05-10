@@ -10,20 +10,20 @@ docker ps
 sleep 10
 
 printf "\nRestoring production database into sanitation environment\n"
-sqlcmd -Usa -P//build2017 -i sql/Restore_Production_Database_as_Development.sql
+sqlcmd -Usa -P//build2017 -i ../sql/Restore_Production_Database_as_Development.sql
 
 printf "\nSanitizing production data for development use\n"
-sqlcmd -Usa -P//build2017 -i sql/Sanitize_Production_Database_for_Dev_use.sql
+sqlcmd -Usa -P//build2017 -i ../sql/Sanitize_Production_Database_for_Dev_use.sql
 sqlcmd -Usa -P//build2017 -Q"SELECT TOP 10 Author FROM SQL2017BuildDemo_DevBig..Comments"
 
 printf "\nDetaching, making copy of sanitized database to create small dev DB, and re-attaching again\n"
-sqlcmd -Usa -P//build2017 -i sql/Detach_DevBig_Database.sql
+sqlcmd -Usa -P//build2017 -i ../sql/Detach_DevBig_Database.sql
 docker exec -it sanitation-station "cp" "/var/opt/mssql/data/SQL2017BuildDemo.mdf" "/var/opt/mssql/data/SQL2017BuildDemoSmall.mdf"
 docker exec -it sanitation-station "cp" "/var/opt/mssql/data/SQL2017BuildDemo.ldf" "/var/opt/mssql/data/SQL2017BuildDemoSmall.ldf"
-sqlcmd -Usa -P//build2017 -i sql/Attach_Dev_Databases.sql
+sqlcmd -Usa -P//build2017 -i ../sql/Attach_Dev_Databases.sql
 
 printf "\nShrinking small dev database\n"
-sqlcmd -Usa -P//build2017 -i sql/Shrink_Development_Database_Small.sql
+sqlcmd -Usa -P//build2017 -i ../sql/Shrink_Development_Database_Small.sql
 
 printf "\nDocker commit to create big dev image\n"
 docker commit sanitation-station db-dev-big-tmp:latest
@@ -54,8 +54,8 @@ printf "\nFinal list of images\n"
 docker images
 
 #Build and Publish images to repo
-docker build ../docker/db-dev-small -t db-dev-small:latest
-docker build ../docker/db-dev-big -t db-dev-big:latest
+docker build ./db-dev-small -t db-dev-small:latest
+docker build ./db-dev-big -t db-dev-big:latest
 
 docker tag db-dev-small:latest ContosoRegistry.azurecr.io/db-dev-small:latest
 docker push ContosoRegistry.azurecr.io/db-dev-small:latest
