@@ -1,0 +1,29 @@
+
+dbImage: "ContosoRegistry.azurecr.io/db-dev-small"
+dbImageTag: "latest"
+
+appImage: "ContosoRegistry.azurecr.io/contosou_web"
+appImageTag: "latest"
+
+## Specify a imagePullPolicy
+## 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
+## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+##
+imagePullPolicy: Always
+
+## Persist data to a persitent volume
+persistence:
+  #enabled: true
+
+  ## A manually managed Persistent Volume and Claim
+  ## Requires persistence.enabled: true
+  ## If defined, PVC must be created manually before volume will be bound
+  #existingClaim: quarrelsome-possum-contoso-u
+
+  ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: default
+  ##
+  # storageClass:
+  accessMode: ReadWriteOnce
+  size: 8Gi
+  subPath: "mssql-db"
