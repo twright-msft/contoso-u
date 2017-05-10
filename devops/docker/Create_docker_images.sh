@@ -17,18 +17,18 @@ docker commit sanitation-station db-pre-prod:latest
 docker images
 
 printf "\nSanitizing production data for development use\n"
-sqlcmd -Usa -P//build2017 -i ../sql/Sanitize_Production_Database_for_Dev_use.sql
+printf "\nUnsanitized data:\n"
 sqlcmd -Usa -P//build2017 -Q"SELECT TOP 10 FirstName, LastName FROM ContosoUniversity.dbo.Person;"
-
-printf "\nShrinking small dev database\n"
-sqlcmd -Usa -P//build2017 -i ../sql/Shrink_Development_Database_Small.sql
+sqlcmd -Usa -P//build2017 -i ../sql/Sanitize_Production_Database_for_Dev_use.sql
+printf "\nSanitized data (using Norwegian encryption):\n"
+sqlcmd -Usa -P//build2017 -Q"SELECT TOP 10 FirstName, LastName FROM ContosoUniversity.dbo.Person;"
 
 printf "\nDocker commit to create big dev image\n"
 docker commit sanitation-station db-dev-big-tmp:latest
 docker images
 
-printf "\nDropping big dev database\n"
-sqlcmd -Usa -P//build2017 -Q"DROP DATABASE ContosoUniversity_DevBig;"
+printf "\nShrinking small dev database\n"
+sqlcmd -Usa -P//build2017 -i ../sql/Shrink_Development_Database_Small.sql
 
 printf "\nDocker commit to create small dev image\n"
 docker commit sanitation-station db-dev-small-tmp:latest
@@ -55,10 +55,13 @@ docker build ./db-dev-small -t db-dev-small:latest
 docker build ./db-dev-big -t db-dev-big:latest
 
 docker tag db-dev-small:latest ContosoRegistry.azurecr.io/db-dev-small:latest
-docker push ContosoRegistry.azurecr.io/db-dev-small:latest
+#docker push ContosoRegistry.azurecr.io/db-dev-small:latest
 
 docker tag db-dev-big:latest ContosoRegistry.azurecr.io/db-dev-big:latest
-docker push ContosoRegistry.azurecr.io/db-dev-big:latest
+#docker push ContosoRegistry.azurecr.io/db-dev-big:latest
+
+docker tag db-pre-prod:latest ContosoRegistry.azurecr.io/db-pre-prod:latest
+#docker push ContosoRegistry.azurecr.io/db-pre-prod:latest
 
 #docker run --name db-big -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=//build2017' -p 1433:1433 -d db-dev-big /opt/mssql/bin/sqlservr
 #docker run --name db-small -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=//build2017' -p 1433:1433 -d db-dev-small /opt/mssql/bin/sqlservr
