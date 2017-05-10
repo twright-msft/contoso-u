@@ -14,38 +14,38 @@ sqlcmd -Usa -P//build2017 -i ../sql/Restore_Production_Database_as_Development.s
 
 printf "\nSanitizing production data for development use\n"
 sqlcmd -Usa -P//build2017 -i ../sql/Sanitize_Production_Database_for_Dev_use.sql
-sqlcmd -Usa -P//build2017 -Q"SELECT TOP 10 Author FROM SQL2017BuildDemo_DevBig..Comments"
+sqlcmd -Usa -P//build2017 -Q"SELECT TOP 10 FirstName, LastName FROM ContosoUniversity_DevBig.dbo.Person;"
 
 printf "\nDetaching, making copy of sanitized database to create small dev DB, and re-attaching again\n"
 sqlcmd -Usa -P//build2017 -i ../sql/Detach_DevBig_Database.sql
-docker exec -it sanitation-station "cp" "/var/opt/mssql/data/SQL2017BuildDemo.mdf" "/var/opt/mssql/data/SQL2017BuildDemoSmall.mdf"
-docker exec -it sanitation-station "cp" "/var/opt/mssql/data/SQL2017BuildDemo.ldf" "/var/opt/mssql/data/SQL2017BuildDemoSmall.ldf"
+docker exec -it sanitation-station "cp" "/var/opt/mssql/data/ContosoUniversityBig.mdf" "/var/opt/mssql/data/ContosoUniversitySmall.mdf"
+docker exec -it sanitation-station "cp" "/var/opt/mssql/data/ContosoUniversityBig.ldf" "/var/opt/mssql/data/ContosoUniversitySmall.ldf"
 sqlcmd -Usa -P//build2017 -i ../sql/Attach_Dev_Databases.sql
+sqlcmd -Usa -P//build2017 -Q"SELECT name FROM sys.databases;"
 
 printf "\nShrinking small dev database\n"
 sqlcmd -Usa -P//build2017 -i ../sql/Shrink_Development_Database_Small.sql
 
 printf "\nDocker commit to create big dev image\n"
 docker commit sanitation-station db-dev-big-tmp:latest
+docker images
 
 printf "\nDropping big dev database\n"
-sqlcmd -Usa -P//build2017 -Q"DROP DATABASE SQL2017BuildDemo_DevBig;"
+sqlcmd -Usa -P//build2017 -Q"DROP DATABASE ContosoUniversity_DevBig;"
 
 printf "\nDocker commit to create small dev image\n"
 docker commit sanitation-station db-dev-small-tmp:latest
+docker images
 docker rm -f sanitation-station
 
-printf "\nAllmost finished images\n"
-docker images
-
 printf "\nFlattening small image to reduce size\n"
-docker run --name tmp-small -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=//build2017' -p 1433:1433 -v /azurebackups:/azurebackups -d db-dev-small-tmp
+docker run --name tmp-small -d db-dev-small-tmp
 docker export tmp-small | docker import - db-dev-small:latest
 docker rm -f tmp-small
 docker rmi db-dev-small-tmp
 
 printf "\nFlattening large image to reduce size\n"
-docker run --name tmp-big -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=//build2017' -p 1433:1433 -v /azurebackups:/azurebackups -d db-dev-big-tmp
+docker run --name tmp-big -d db-dev-big-tmp
 docker export tmp-big | docker import - db-dev-big:latest
 docker rm -f tmp-big
 docker rmi db-dev-big-tmp
@@ -53,7 +53,7 @@ docker rmi db-dev-big-tmp
 printf "\nFinal list of images\n"
 docker images
 
-#Build and Publish images to repo
+printf "\nBuild and Publish images to registry\n"
 docker build ./db-dev-small -t db-dev-small:latest
 docker build ./db-dev-big -t db-dev-big:latest
 
