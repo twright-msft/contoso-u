@@ -1,4 +1,4 @@
-FROM microsoft/aspnetcore-build
+FROM microsoft/aspnetcore-build:1.1
 
 RUN mkdir /app
 WORKDIR /app
